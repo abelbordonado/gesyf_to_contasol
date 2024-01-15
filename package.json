@@ -1,0 +1,15 @@
+{
+  "name": "gesyf_to_contasol",
+  "version": "1.0.0",
+  "description": "Conversts gesyf CSV to contasol CSV",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abel Bordonado",
+  "license": "ISC",
+  "dependencies": {
+    "csv": "^6.3.6",
+    "csv-write-stream": "^2.0.0"
+  }
+}
