@@ -65,21 +65,8 @@ function contaPlusToCsv(contaplus) {
   item[CONTAPLUS.AMOUNT_CREDIT] = contaplus.amount_credit;
   return item;
 }
-
-module.exports = async function convert(filePath) {
-  if (!fs.existsSync(filePath)) {
-    return console.log(`${filePath} not found`);
-  }
-
-  if (path.extname(filePath) !== ".csv") {
-    return console.log(`Only CSV files are allowed`);
-  }
-
-  const writer = csvWriter({ headers: CONTAPLUS.HEADERS });
-  writer.pipe(fs.createWriteStream("out.csv"));
-
-  // -----------------------------------
-  function convertRow(row, index) {
+function generateParser(writer) {
+  return (row, index) => {
     // Skip the headers
     if (index < 2) {
       return null;
@@ -95,12 +82,26 @@ module.exports = async function convert(filePath) {
         .fill("■")
         .join("")
     );
+  };
+}
+module.exports = async function convert(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return console.log(`${filePath} not found`);
   }
-  // -----------------------------------
+
+  if (path.extname(filePath) !== ".csv") {
+    return console.log(`Only CSV files are allowed`);
+  }
+
+  const writer = csvWriter({ headers: CONTAPLUS.HEADERS });
+  writer.pipe(fs.createWriteStream("out.csv"));
+
+  const convertRow = generateParser(writer);
 
   const total = await readCSV(filePath, convertRow);
-  writeProgress("");
+
   writer.end();
 
+  writeProgress("");
   console.log(`\n\n Parsed ${total}\n`);
 };
