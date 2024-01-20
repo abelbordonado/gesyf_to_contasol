@@ -54,8 +54,10 @@ function gsifToContaPlus(gesif) {
   return columns.filter((item) => !!item);
 }
 
-function contaPlusToCsv(contaplus) {
+function contaPlusToCsv(contaplus, diary) {
   const item = Array.from({ length: CONTAPLUS.TOTAL_COLUMNS }).fill("");
+
+  item[CONTAPLUS.DIARY] = diary;
   item[CONTAPLUS.SEAT] = contaplus.seat;
   item[CONTAPLUS.DATE] = contaplus.date;
   item[CONTAPLUS.TOPIC] = contaplus.topic;
@@ -66,6 +68,7 @@ function contaPlusToCsv(contaplus) {
   return item;
 }
 function generateParser(writer) {
+  const diaryCounter = { date: "", counter: 1 };
   return (row, index) => {
     // Skip the headers
     if (index < 2) {
@@ -74,8 +77,16 @@ function generateParser(writer) {
 
     const gesyf = parseGesif(row);
 
+    if (gesyf.date !== diaryCounter.date) {
+      diaryCounter.date = gesyf.date;
+      diaryCounter.counter = 1;
+    }
+
     const contaplus = gsifToContaPlus(gesyf);
-    contaplus.map((item) => writer.write(contaPlusToCsv(item)));
+
+    contaplus.map((item) =>
+      writer.write(contaPlusToCsv(item, diaryCounter.counter++))
+    );
 
     writeProgress(
       Array.from({ length: index % 100 })

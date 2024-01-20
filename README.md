@@ -14,5 +14,5 @@ In order to help the migration of the accounts among both softwares
 Will generate a `out.csv`
 
 ## Help
-
+    
 `yarn start --help`

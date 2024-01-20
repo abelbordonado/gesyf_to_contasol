@@ -3,9 +3,9 @@ const GESYF = {
   SEAT: 0, // Asiento
   DATE: 1, // Fecha
   DUTY: 2, // Deber (CuentaD)
-  AMOUNT_DUTY: 3, // ImportD
+  AMOUNT_DUTY: 8, // ImportDEuros
   CREDIT: 4, // Haber (CuentaH)
-  AMOUNT_CREDIT: 5, //  ImporteH
+  AMOUNT_CREDIT: 9, //  ImporteH Euros
   TOPIC: 6, // Concepto
   TOTAL_ROWS: 6,
 };
