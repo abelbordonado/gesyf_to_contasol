@@ -57,7 +57,8 @@ function gsifToContaPlus(gesif) {
 function contaPlusToCsv(contaplus, diary) {
   const item = Array.from({ length: CONTAPLUS.TOTAL_COLUMNS }).fill("");
 
-  item[CONTAPLUS.DIARY] = diary;
+  item[CONTAPLUS.DIARY] = 1;
+  item[CONTAPLUS.ORDER] = diary;
   item[CONTAPLUS.SEAT] = contaplus.seat;
   item[CONTAPLUS.DATE] = contaplus.date;
   item[CONTAPLUS.TOPIC] = contaplus.topic;
@@ -68,7 +69,7 @@ function contaPlusToCsv(contaplus, diary) {
   return item;
 }
 function generateParser(writer) {
-  const diaryCounter = { date: "", counter: 1 };
+  const orderByDate = { date: "", counter: 1 };
   return (row, index) => {
     // Skip the headers
     if (index < 2) {
@@ -77,15 +78,15 @@ function generateParser(writer) {
 
     const gesyf = parseGesif(row);
 
-    if (gesyf.date !== diaryCounter.date) {
-      diaryCounter.date = gesyf.date;
-      diaryCounter.counter = 1;
+    if (gesyf.date !== orderByDate.date) {
+      orderByDate.date = gesyf.date;
+      orderByDate.counter = 1;
     }
 
     const contaplus = gsifToContaPlus(gesyf);
 
     contaplus.map((item) =>
-      writer.write(contaPlusToCsv(item, diaryCounter.counter++))
+      writer.write(contaPlusToCsv(item, orderByDate.counter++))
     );
 
     writeProgress(
@@ -104,7 +105,7 @@ module.exports = async function convert(filePath) {
     return console.log(`Only CSV files are allowed`);
   }
 
-  const writer = csvWriter({ headers: CONTAPLUS.HEADERS });
+  const writer = csvWriter({ headers: CONTAPLUS.HEADERS, separator: ";" });
   writer.pipe(fs.createWriteStream("out.csv"));
 
   const convertRow = generateParser(writer);
